@@ -1,0 +1,67 @@
+ชื่อ :blnk
+
+บน : workflow_dispatch
+
+งาน :
+
+  สร้าง :
+
+    วิ่งบน : windows-ล่าสุด
+
+    หมดเวลา-นาที : 9999
+
+    ขั้นตอน :
+
+    - ชื่อ : Mendownload Ngrok.
+
+      วิ่ง : |
+
+        เรียกใช้-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+
+        เรียกใช้-WebRequest https://raw.githubusercontent.com/akuhnet/rdpmei/main/start.bat -OutFile start.bat
+
+        เรียกใช้-WebRequest https://raw.githubusercontent.com/akuhnet/rdpmei/main/wallpaper.png -OutFile wallpaper.bmp
+
+        เรียกใช้-WebRequest https://raw.githubusercontent.com/akuhnet/rdpmei/main/wallpaper.bat -OutFile wallpaper.bat
+
+    - ชื่อ : Mengextract Ngrok File.
+
+      run : Expand-Archive ngrok.zip
+
+    - ชื่อ : เกี่ยวก้อย งรก.
+
+      เรียกใช้ : .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
+
+      env :
+
+        NGROK_AUTH_TOKEN : ${{ secrets.NGROK_AUTH_TOKEN }}
+
+    - ชื่อ : Mengaktifkan Akses RDP.
+
+      วิ่ง : |
+
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -ค่า 0
+
+        Enable-NetFirewallRule -DisplayGroup "เดสก์ท็อประยะไกล"
+
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -ชื่อ "UserAuthentication" -Value 1
+
+        คัดลอก wallpaper.bmp D:\a\wallpaper.bmp
+
+        คัดลอก wallpaper.bat D:\a\wallpaper.bat
+
+    - ชื่อ : อุโมงค์ทับถม.
+
+      เรียกใช้ : Start-Process Powershell -ArgumentList '-Noexit -Command ".\ngrok\ngrok.exe tcp 3389"'
+
+    - ชื่อ : Connect Ke RDP Kamu CPU 2 Core - 7GB Ram - 255 SSD.
+
+      run : cmd /c start.bat
+
+    - ชื่อ : Berhasil Dibuat! Anda Bisa Menutup แท็บเซการัง.
+
+      วิ่ง : |
+
+        เรียกใช้-WebRequest https://raw.githubusercontent.com/akuhnet/rdpmei/main/loop.ps1 -OutFile loop.ps1
+
+        ./loop.ps1
